@@ -24,10 +24,7 @@ free mods and modpacks, solely for non-commercial purposes, provided that:
 2. You identify modifications and do not imply endorsement by Arcsea.
 3. You distribute modified or derivative assets under these same terms.
 
-Commercial use is not permitted without separate written permission from
-Arcsea. Commercial use includes selling the assets or derivatives, selling
-access to them, including them in paid products or modpacks, and using them
-in services or servers where the assets are used to generate revenue.
+Commercial use is not permitted.
 Non-commercial means use not primarily intended for or directed toward
 commercial advantage or monetary compensation.
 
@@ -40,8 +37,7 @@ damages, or other liability arising from use of the assets.
 
 ## 中文说明
 
-两个版本中的模型目录及刀的物品贴图适用本非商业许可，代码继续采用 MIT。
+材质（两个版本中的模型及配套刀贴图）非商用，代码继续采用 MIT。
 允许非商业使用、复制、修改和再分发（包括免费模组和整合包），但必须保留
 Arcsea 署名、附带本许可、标明修改，并让衍生模型继续采用相同条款。
-销售模型或衍生作品、付费整合包、出售使用权限及利用模型获取收入的服务或
-服务器等商业用途，需要另行取得 Arcsea 的书面授权。英文条款为完整许可正文。
+禁止商业使用。英文条款为完整许可正文。
