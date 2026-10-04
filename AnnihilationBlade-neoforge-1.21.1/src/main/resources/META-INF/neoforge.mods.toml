@@ -1,6 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "[4,)"
-license="MIT (code); Model Non-Commercial License 1.0 (models)"
+license="MIT (code); CC-BY-NC-4.0 (models and textures)"
 mixins = [{config = "annihilationblade.mixins.json"}]
 
 [[mods]]

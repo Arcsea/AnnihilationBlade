@@ -174,7 +174,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named('jar', Jar).configure {
-    from(project.files('../LICENSE', '../LICENSE-MODELS.md')) {
+    from(project.files('../LICENSE', '../LICENSE-MODELS.md', '../LICENSE-CC-BY-NC-4.0.txt')) {
         into 'META-INF'
     }
 }
