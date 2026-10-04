@@ -1,43 +1,26 @@
-# Model Non-Commercial License 1.0
+# 材质许可：CC BY-NC 4.0
 
-Copyright (c) 2026 Arcsea. All rights reserved except as granted below.
+Copyright (c) 2026 Arcsea
 
-## Scope
+本项目的材质（模型及配套刀贴图）采用 **Creative Commons 署名—非商业性使用 4.0 国际版（CC BY-NC 4.0）**。
+代码继续采用 [MIT](LICENSE)。
 
-This license covers the models and their associated textures in both the
-Forge and NeoForge projects, specifically:
+适用范围为两个版本目录下的以下路径：
 
 - `src/main/resources/assets/annihilationblade/model/**`
 - `src/main/resources/assets/annihilationblade/textures/item/blade.png`
 
-These paths are relative to each project directory. Converted, extracted,
-modified, and derivative versions of these assets are also covered. The MIT
-license for the project code does not grant rights to these assets.
+作者：Arcsea。作品来源：[Annihilation Blade](https://github.com/Arcsea/AnnihilationBlade)。
 
-## Permission and conditions
+允许按协议进行非商业复制、修改和分享，须保留适当署名、许可说明并标明修改。
+本说明用于标明作品与许可范围，不增加或修改 CC BY-NC 4.0 的条款。
 
-You may use, copy, modify, and redistribute the covered assets, including in
-free mods and modpacks, solely for non-commercial purposes, provided that:
+- [官方中文摘要](https://creativecommons.org/licenses/by-nc/4.0/deed.zh-hans)
+- [官方法律正文](https://creativecommons.org/licenses/by-nc/4.0/legalcode.en)
+- [随项目提供的完整协议正文](LICENSE-CC-BY-NC-4.0.txt)
 
-1. You retain the attribution to Arcsea and include this license with any
-   redistributed assets or packages containing them.
-2. You identify modifications and do not imply endorsement by Arcsea.
-3. You distribute modified or derivative assets under these same terms.
-
-Commercial use is not permitted.
-Non-commercial means use not primarily intended for or directed toward
-commercial advantage or monetary compensation.
-
-No ownership or trademark rights are transferred. Rights in third-party
-assets, if any, remain with their respective owners and are not granted here.
-
-The assets are provided "AS IS", without warranty of any kind. To the extent
-permitted by applicable law, the copyright holder is not liable for claims,
-damages, or other liability arising from use of the assets.
-
-## 中文说明（摘要）
-
-材质（两个版本中的模型及配套刀贴图）非商用，代码继续采用 MIT。
-允许非商业使用、复制、修改和再分发（包括免费模组和整合包），但必须保留
-Arcsea 署名、附带本许可、标明修改，并让衍生模型继续采用相同条款。
-禁止商业使用。英文条款为完整许可正文。
+English: The models and associated blade textures at the paths above, in both
+project directories, are licensed under Creative Commons Attribution-NonCommercial
+4.0 International (CC BY-NC 4.0). Attribution: Arcsea. Source:
+https://github.com/Arcsea/AnnihilationBlade. This notice identifies the licensed
+material and does not add to or modify the official license terms.
