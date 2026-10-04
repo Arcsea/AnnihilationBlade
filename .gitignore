@@ -1,3 +1,4 @@
+# Development files, build outputs, and local game runs
 .idea/
 *.iml
 *.log

@@ -22,13 +22,6 @@ GitHub Actions 会分别构建两个版本。
 
 ## 许可
 
-**代码采用 MIT；材质（模型及配套刀贴图）非商用。**
-
-- 代码及其他未被排除的项目文件：[MIT License](LICENSE)。
-- 两个版本的 `assets/annihilationblade/model/` 目录及
-  `assets/annihilationblade/textures/item/blade.png`：
-  [Model Non-Commercial License 1.0](LICENSE-MODELS.md)。
-- 材质允许保留署名和许可的非商业修改、分享及免费整合包使用，禁止商业使用。
-- 两份许可均随构建的模组 JAR 打包。模型提取或格式转换不会改变其许可。
+代码采用 [MIT](LICENSE)，材质（模型及配套刀贴图）[非商用](LICENSE-MODELS.md)。具体范围与条款见协议文件，两份协议均随模组 JAR 打包。
 
 上述范围针对本次重构后的资产，不追溯改变先前版本已授予的许可。

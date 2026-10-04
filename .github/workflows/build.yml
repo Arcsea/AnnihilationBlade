@@ -1,4 +1,4 @@
-name: Build
+name: Forge and NeoForge Build
 
 on:
   push:

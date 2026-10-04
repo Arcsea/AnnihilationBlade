@@ -35,7 +35,7 @@ The assets are provided "AS IS", without warranty of any kind. To the extent
 permitted by applicable law, the copyright holder is not liable for claims,
 damages, or other liability arising from use of the assets.
 
-## 中文说明
+## 中文说明（摘要）
 
 材质（两个版本中的模型及配套刀贴图）非商用，代码继续采用 MIT。
 允许非商业使用、复制、修改和再分发（包括免费模组和整合包），但必须保留
