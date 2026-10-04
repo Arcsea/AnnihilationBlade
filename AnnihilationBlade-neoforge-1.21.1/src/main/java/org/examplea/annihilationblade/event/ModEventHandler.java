@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +21,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -33,7 +35,8 @@ import java.util.Optional;
 import java.util.Set;
 import org.examplea.annihilationblade.Annihilationblade;
 import org.examplea.annihilationblade.blade.AnnihilationBladeFactory;
-import org.examplea.annihilationblade.combat.TerminusLogic;
+import org.examplea.annihilationblade.combat.TerminationContext;
+import org.examplea.annihilationblade.combat.TerminationService;
 
 @EventBusSubscriber(modid = Annihilationblade.MODID)
 public class ModEventHandler {
@@ -108,6 +111,19 @@ public class ModEventHandler {
         return false;
     }
 
+    /**
+     * 该伤害是否来自湮灭之刃持有者的攻击：主手持有神刀，或伤害直接实体是 SlashBlade
+     * 召唤物且玩家背包持有神刀。供事件处理器与 Mixin 兜底触发共用。
+     */
+    public static boolean shouldKill(Player player, DamageSource source) {
+        if (isGodBlade(player.getMainHandItem())) return true;
+        Entity direct = source.getDirectEntity();
+        if (direct != null && direct.getType().toString().contains("slashblade")) {
+            return hasBladeInInventory(player);
+        }
+        return false;
+    }
+
     private static String getKey(Player player) {
         return player.getStringUUID();
     }
@@ -157,30 +173,30 @@ public class ModEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        if (TerminationService.isInternalDamage()) return;
+
         if (event.getEntity() instanceof Player player && hasBladeInInventory(player)) {
             event.setCanceled(true);
             return;
         }
 
         Entity source = event.getSource().getEntity();
-        Entity directSource = event.getSource().getDirectEntity();
+        if (source instanceof Player player
+                && shouldKill(player, event.getSource())
+                && TerminationService.request(event.getEntity(), player, TerminationContext.NORMAL_ATTACK)) {
+            event.setCanceled(true);
 
-        if (source instanceof Player player) {
-            boolean shouldKill = false;
-            if (isGodBlade(player.getMainHandItem())) shouldKill = true;
-            if (directSource != null && directSource.getType().toString().contains("slashblade")) {
-                if (hasBladeInInventory(player)) shouldKill = true;
+            if (player.distanceTo(event.getEntity()) < 6.0f) {
+                event.getEntity().level().playSound(null, event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ(),
+                        SoundEvents.TRIDENT_THUNDER, SoundSource.PLAYERS, 0.5f, 2.0f);
             }
+        }
+    }
 
-            if (shouldKill && !TerminusLogic.isMarkedForDeath(event.getEntity())) {
-                event.setAmount(10000.0f);
-                TerminusLogic.markForDeath(event.getEntity());
-
-                if (player.distanceTo(event.getEntity()) < 6.0f) {
-                    event.getEntity().level().playSound(null, event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ(),
-                            SoundEvents.TRIDENT_THUNDER, SoundSource.PLAYERS, 0.5f, 2.0f);
-                }
-            }
+    @SubscribeEvent
+    public static void onLevelTick(net.neoforged.neoforge.event.tick.LevelTickEvent.Post event) {
+        if (event.getLevel() instanceof net.minecraft.server.level.ServerLevel level) {
+            TerminationService.tick(level);
         }
     }
 
@@ -192,7 +208,25 @@ public class ModEventHandler {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void onLivingKnockBack(LivingKnockBackEvent event) {
+        if (event.getEntity() instanceof Player player && hasBladeInInventory(player)) {
+            event.setCanceled(true);
+        }
+    }
+
     private static final Set<String> playersWithFlight = new HashSet<>();
+    // 持有湮灭之刃时的飞行速度倍率（默认 3 倍，可用 -Dannihilationblade.flightSpeedMult= 调整）。
+    private static final float FLIGHT_SPEED_MULT = flightSpeedMultiplier();
+
+    private static float flightSpeedMultiplier() {
+        try {
+            return Math.max(1.0F, Float.parseFloat(System.getProperty("annihilationblade.flightSpeedMult", "3.0")));
+        } catch (RuntimeException ignored) {
+            return 3.0F;
+        }
+    }
+
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -219,6 +253,12 @@ public class ModEventHandler {
                     playersWithFlight.add(key);
                     player.onUpdateAbilities();
                 }
+            }
+            // 提升飞行速度：仅飞行时生效，数值变化时才同步给客户端。
+            float fastFlightSpeed = 0.05F * FLIGHT_SPEED_MULT;
+            if (player.getAbilities().getFlyingSpeed() != fastFlightSpeed) {
+                player.getAbilities().setFlyingSpeed(fastFlightSpeed);
+                player.onUpdateAbilities();
             }
             if (player.getY() < player.level().getMinBuildHeight() - 64) {
                 player.teleportTo(player.getX(), player.level().getMaxBuildHeight() + 0, player.getZ());
@@ -271,6 +311,10 @@ public class ModEventHandler {
                 }
             }
         } else {
+            if (player.getAbilities().getFlyingSpeed() != 0.05F) {
+                player.getAbilities().setFlyingSpeed(0.05F);
+                player.onUpdateAbilities();
+            }
             if (!player.isCreative() && !player.isSpectator() && player.getAbilities().mayfly && playersWithFlight.contains(key)) {
                 player.getAbilities().mayfly = false;
                 player.getAbilities().flying = false;

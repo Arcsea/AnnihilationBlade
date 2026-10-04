@@ -22,10 +22,6 @@ import org.examplea.annihilationblade.event.ModEventHandler;
  */
 public final class SpatialFractureExecutor {
     private static final double MAX_DISTANCE = 128.0D;
-    private static final double STEP = 3.5D;
-    private static final double SAMPLE_RADIUS = 3.0D;
-    private static final double BACKUP_RADIUS = 32.0D;
-    private static final int MAX_TARGETS = 256;
 
     private SpatialFractureExecutor() {
     }
@@ -41,31 +37,21 @@ public final class SpatialFractureExecutor {
 
         targets.forEach(target -> {
             spawnSlash(level, player, target);
-            TerminusLogic.execute(target, player);
+            TerminationService.request(target, player, TerminationContext.SPATIAL_FRACTURE);
         });
 
         playDetonation(level, player, targets.size());
     }
 
     private static Set<LivingEntity> gatherTargets(ServerLevel level, Player player) {
-        Vec3 eye = player.getEyePosition();
-        Vec3 look = player.getLookAngle().normalize();
+        // 以玩家为球心、半径 MAX_DISTANCE 的球形范围，收集范围内所有可击杀目标。
+        AABB sphere = player.getBoundingBox().inflate(MAX_DISTANCE);
         Set<LivingEntity> targets = new LinkedHashSet<>();
-
-        for (double distance = 2.0D; distance <= MAX_DISTANCE && targets.size() < MAX_TARGETS; distance += STEP) {
-            Vec3 sampleCenter = eye.add(look.scale(distance));
-            AABB sample = new AABB(sampleCenter, sampleCenter).inflate(SAMPLE_RADIUS);
-            for (LivingEntity candidate : level.getEntitiesOfClass(LivingEntity.class, sample, entity -> canTarget(player, entity))) {
-                targets.add(candidate);
-                if (targets.size() >= MAX_TARGETS) break;
-            }
+        for (LivingEntity candidate : level.getEntitiesOfClass(LivingEntity.class, sphere,
+                entity -> canTarget(player, entity)
+                        && player.distanceToSqr(entity) <= MAX_DISTANCE * MAX_DISTANCE)) {
+            targets.add(candidate);
         }
-
-        if (targets.isEmpty()) {
-            AABB fallback = player.getBoundingBox().inflate(BACKUP_RADIUS);
-            targets.addAll(level.getEntitiesOfClass(LivingEntity.class, fallback, entity -> canTarget(player, entity)));
-        }
-
         return targets;
     }
 

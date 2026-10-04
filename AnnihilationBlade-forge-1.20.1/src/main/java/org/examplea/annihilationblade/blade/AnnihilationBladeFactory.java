@@ -25,6 +25,9 @@ public final class AnnihilationBladeFactory {
 
     /** 通过 SlashBlade Capability 向已有拔刀剑写入湮灭之刃属性。 */
     public static void applyGodStats(ItemStack stack) {
+        stack.getOrCreateTag().putBoolean("Unbreakable", true);
+        stack.setDamageValue(0);
+
         BladePropertyBuilder.of(stack)
                 .setTranslationKey(BLADE_TRANSLATION_KEY)
                 .setAnnihilationBlade(true)

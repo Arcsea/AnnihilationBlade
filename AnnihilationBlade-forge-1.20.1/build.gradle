@@ -2,10 +2,11 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
 group = 'org.examplea.annihilationblade'
-version = '1.3.0'
+version = '1.4.1'
 
 base {
     archivesName = 'annihilationblade'
@@ -39,6 +40,11 @@ minecraft {
     }
 }
 
+mixin {
+    add sourceSets.main, 'annihilationblade.refmap.json'
+    config 'annihilationblade.mixins.json'
+}
+
 sourceSets {
     main {
         resources {
@@ -53,11 +59,15 @@ sourceSets {
 repositories {
     mavenCentral()
     maven {
+        name = 'SpongePowered'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+    maven {
         name = 'MinecraftForge'
         url = 'https://maven.minecraftforge.net/'
     }
     maven {
-        url "https://www.cursemaven.com"
+        url "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
@@ -66,6 +76,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // 1. 用于让你的代码能正常 import 拔刀剑的类（编译期）
     implementation(fg.deobf("curse.maven:slashblade-resharped-1022428:6164820")) {
         exclude group: 'org.apache.logging.log4j'
@@ -90,6 +101,10 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
+    from(project.files('../LICENSE', '../LICENSE-MODELS.md')) {
+        into 'META-INF'
+    }
+    archiveFileName = "annihilationblade-forge-${minecraft_version}-${project.version}.jar"
     manifest {
         attributes([
                 "Specification-Title"     : mod_id,
@@ -98,7 +113,8 @@ tasks.named('jar', Jar).configure {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : mod_authors,
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs"            : "annihilationblade.mixins.json"
         ])
     }
     finalizedBy 'reobfJar'
