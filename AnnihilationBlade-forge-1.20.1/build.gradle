@@ -101,7 +101,7 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
-    from(project.files('../LICENSE', '../LICENSE-MODELS.md')) {
+    from(project.files('../LICENSE', '../LICENSE-MODELS.md', '../LICENSE-CC-BY-NC-4.0.txt')) {
         into 'META-INF'
     }
     archiveFileName = "annihilationblade-forge-${minecraft_version}-${project.version}.jar"
