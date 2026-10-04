@@ -11,5 +11,3 @@
 ```
 
 Linux / macOS 使用 `./gradlew build`，构建产物位于 `build/libs/`。
-
-代码采用 [MIT](../LICENSE)，材质（模型及配套刀贴图）[非商用](../LICENSE-MODELS.md)。
